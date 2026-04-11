@@ -1,6 +1,8 @@
 const Product = require('../models/product.model');
+const { client } = require('../config/redis');
 
 const createProduct = async (data) => {
+    await client.del("products:*");
     return await Product.create(data);
 }
 
@@ -9,6 +11,15 @@ const getProducts = async (data) => {
 
     page = Number(page);
     limit = Number(limit);
+
+    const cacheKey = `products:${page}:${limit}:${search || ''}:${category || ''}`;
+
+    const cachedData = await client.get(cacheKey);
+    if (cachedData) {
+        console.log('Serving from Redis');
+        return JSON.parse(cachedData);
+    }
+
     const filter = {};
 
     if (search) {
@@ -28,12 +39,16 @@ const getProducts = async (data) => {
 
     const total = await Product.coundDocuments(products);
 
-    return {
+    const result = {
         products,
         total,
         page,
         pages: Math.ceil(total / limit)
     };
+
+    await client.set(cacheKey, 60, JSON.stringify(result));
+
+    return result;
 };
 
 const getProductById = async (id) => {

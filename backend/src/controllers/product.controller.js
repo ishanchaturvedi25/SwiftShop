@@ -2,7 +2,11 @@ const productService = require('../services/product.service');
 
 const createProduct = async (req, res) => {
     try {
-        const product = await productService.createProduct(req.body);
+        const imageUrls = req.files.map(file => `/uploads/${file.filename}`);
+        
+        const productData = { ...req.body, imageUrls };
+        
+        const product = await productService.createProduct(productData);
         res.status(201).json(product);
     } catch (error) {
         res.status(400).json({ message: error.message });

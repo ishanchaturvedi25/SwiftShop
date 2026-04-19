@@ -55,4 +55,39 @@ const getProductById = async (id) => {
     return await Product.findById(id);
 };
 
-module.exports = { createProduct, getProducts, getProductById };
+const getBestSellers = async () => {
+    let { page = 1, limit = 10, search, category } = data;
+
+    page = Number(page);
+    limit = Number(limit);
+
+    const cacheKey = `bestSellers:${page}:${limit}`;
+    
+    const cachedData = await client.get(cacheKey);
+    if (cachedData) {
+        console.log('Serving best sellers from Redis');
+        return JSON.parse(cachedData);
+    }
+
+    const skip = (page - 1) * limit;
+
+    const products = await Product.find({ bestSeller: true })
+                        .skip(skip)
+                        .limit(limit)
+                        .sort({ createdAt: -1 });
+
+    const total = await Product.countDocuments(products);
+
+    const result = {
+        products,
+        total,
+        page,
+        pages: Math.ceil(total / limit)
+    };
+
+    await client.set(cacheKey, 60, JSON.stringify(products));
+    
+    return products;
+};
+
+module.exports = { createProduct, getProducts, getProductById, getBestSellers };

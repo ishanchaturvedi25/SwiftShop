@@ -31,4 +31,13 @@ const getProductById = async (req, res) => {
     }
 };
 
-module.exports = { createProduct, getProducts, getProductById };
+const getBestSellers = async (req, res) => {
+    try {
+        const products = await productService.getBestSellers();
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+module.exports = { createProduct, getProducts, getProductById, getBestSellers };

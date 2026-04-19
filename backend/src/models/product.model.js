@@ -7,6 +7,10 @@ const productSchema = new mongoose.Schema({
     category: 'String',
     imageUrls: ['String'],
     stock: 'Number',
+    bestSeller: {
+        type: Boolean,
+        default: false
+    },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);

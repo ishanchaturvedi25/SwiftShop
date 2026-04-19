@@ -37,7 +37,7 @@ const getProducts = async (data) => {
                         .limit(limit)
                         .sort({ createdAt: -1 });
 
-    const total = await Product.coundDocuments(products);
+    const total = await Product.countDocuments(products);
 
     const result = {
         products,

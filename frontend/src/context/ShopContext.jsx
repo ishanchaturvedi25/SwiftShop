@@ -11,6 +11,9 @@ const ShopContextProvider = (props) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [search, setSearch] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -36,6 +39,10 @@ const ShopContextProvider = (props) => {
     products,
     loading,
     error,
+    search,
+    setSearch,
+    showSearch,
+    setShowSearch,
   };
 
   return (

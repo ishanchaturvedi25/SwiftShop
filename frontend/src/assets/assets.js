@@ -8,6 +8,7 @@ import exchange_icon from './exchange_icon.png'
 import quality_icon from './quality_icon.png'
 import support_img from './support_img.png'
 import dropdown_icon from './dropdown_icon.png'
+import cross_icon from './cross_icon.png'
 
 export const assets = {
     logo,
@@ -20,4 +21,5 @@ export const assets = {
     quality_icon,
     support_img,
     dropdown_icon,
+    cross_icon,
 }

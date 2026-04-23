@@ -9,8 +9,8 @@ const { addToCartSchema, updateCartSchema, removeFromCartSchema } = require('../
 router.use(authMiddleware);
 
 router.get('/', cartController.getCart);
-router.get('/add', validate(addToCartSchema), cartController.addToCart);
-router.get('/update', validate(updateCartSchema), cartController.updateCartItem);
-router.get('/remove', validate(removeFromCartSchema), cartController.removeFromCart);
+router.post('/add', validate(addToCartSchema), cartController.addToCart);
+router.put('/update', validate(updateCartSchema), cartController.updateCartItem);
+router.delete('/remove', validate(removeFromCartSchema), cartController.removeFromCart);
 
 module.exports = router;

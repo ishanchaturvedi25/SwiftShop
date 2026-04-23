@@ -1,70 +1,67 @@
-const Cart = require('../models/cart.model');
+const Cart = require("../models/cart.model");
 
 const getCart = async (userId) => {
-    return await Cart.findOne({ user: userId }).populate('items.product');
-}
+  return await Cart.findOne({ user: userId }).populate("items.product");
+};
 
-const addToCart = async (userId, productId, quantity) => {
-    let cart = await Cart.findOne({ user: userId });
+const addToCart = async (userId, productId, size, quantity) => {
+  let cart = await Cart.findOne({ user: userId });
 
-    if (!cart) {
-        cart = await Cart.create({
-            user: userId,
-            items: [{product: productId, quantity}]
-        });
-        return cart;
-    }
-
-    const itemIdx = cart.items.findIndex(
-        item => item.product.toString() === productId
-    );
-
-    if (itemIdx > -1) {
-        cart.items[productId].quantity += quantity;
-    } else {
-        cart.items.push({ product: productId, quantity });
-    }
-
-    await cart.save();
+  if (!cart) {
+    cart = await Cart.create({
+      user: userId,
+      items: [{ product: productId, size, quantity }],
+    });
     return cart;
-}
+  }
 
-const updateCartItem = async (userId, productId, quantity) => {
-    const cart = await Cart.findOne({ user: userId });
+  const itemIdx = cart.items.findIndex(
+    (item) => item.product.toString() === productId && item.size === size,
+  );
 
-    if (!cart)
-        throw new Error('Cart not found');
+  if (itemIdx > -1) {
+    cart.items[itemIdx].quantity += quantity;
+  } else {
+    cart.items.push({ product: productId, size, quantity });
+  }
 
-    const item = cart.items.find(
-        item => item.product.toString() === productId
-    );
+  await cart.save();
+  return cart;
+};
 
-    if (!item)
-        throw new Error('Item not in cart');
+const updateCartItem = async (userId, productId, size, quantity) => {
+  const cart = await Cart.findOne({ user: userId });
 
-    item.quantity = quantity;
+  if (!cart) throw new Error("Cart not found");
 
-    await cart.save();
-    return cart;
-}
+  const item = cart.items.find(
+    (item) => item.product.toString() === productId && item.size === size,
+  );
 
-const removeFromCart = async (userId, productId) => {
-    const cart = await Cart.findOne({ user: userId });
+  if (!item) throw new Error("Item not in cart");
 
-    if (!cart)
-        throw new Error('Cart not found');
+  item.quantity = quantity;
 
-    cart.items = cart.items.filter(
-        item => item.product.toString() !== productId
-    );
+  await cart.save();
+  return cart;
+};
 
-    await cart.save();
-    return cart;
-}
+const removeFromCart = async (userId, productId, size) => {
+  const cart = await Cart.findOne({ user: userId });
+
+  if (!cart) throw new Error("Cart not found");
+
+  cart.items = cart.items.filter(
+    (item) => !(item.product.toString() === productId && item.size === size),
+  );
+
+  await cart.save();
+  return cart;
+};
 
 module.exports = {
-    getCart,
-    addToCart,
-    updateCartItem,
-    removeFromCart
-}
+  getCart,
+  addToCart,
+  updateCartItem,
+  removeFromCart,
+};

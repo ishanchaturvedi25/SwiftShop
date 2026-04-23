@@ -9,6 +9,8 @@ import quality_icon from './quality_icon.png'
 import support_img from './support_img.png'
 import dropdown_icon from './dropdown_icon.png'
 import cross_icon from './cross_icon.png'
+import star_icon from './star_icon.png'
+import star_dull_icon from './star_dull_icon.png'
 
 export const assets = {
     logo,
@@ -22,4 +24,6 @@ export const assets = {
     support_img,
     dropdown_icon,
     cross_icon,
+    star_icon,
+    star_dull_icon,
 }

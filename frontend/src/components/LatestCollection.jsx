@@ -11,9 +11,8 @@ const LatestCollection = () => {
   useEffect(() => {
     async function fetchLatestProducts() {
         try {
-            const data = await apiClient.get('/products?limit=20');
-            console.log(data);
-            setLatestProducts(data?.products || []);
+            const res = await apiClient.get('/products?limit=20');
+            setLatestProducts(res?.data?.products || []);
         } catch (error) {
             console.log('Error while fetching the latest products', error);
             setLatestProducts([]);
@@ -34,9 +33,9 @@ const LatestCollection = () => {
 
         <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6'>
             {
-                latestProducts.map((item) => {
-                    <ProductItem key={item.id} id={item.id} image={item.image} name={item.name} price={item.price} />
-                })
+                latestProducts.map((item) => (
+                    <ProductItem key={item._id} id={item._id} image={item.image} name={item.name} price={item.price} imageUrls={item.imageUrls} />
+                ))
             }
         </div>
     </div>

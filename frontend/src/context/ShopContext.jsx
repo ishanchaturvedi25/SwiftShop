@@ -139,9 +139,8 @@ const ShopContextProvider = (props) => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const data = await apiClient.get("/products");
-        console.log(data);
-        setProducts(data?.products || []);
+        const res = await apiClient.get("/products");
+        setProducts(res.data?.products || []);
         setError(null);
       } catch (err) {
         setError(err.message);

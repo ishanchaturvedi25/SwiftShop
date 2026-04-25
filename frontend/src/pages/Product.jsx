@@ -11,8 +11,8 @@ const Product = () => {
   const [image, setImage] = useState('');
   const [size, setSize] = useState('');
 
-  const productData = products.find(item => item.id === productId);
-  const displayImage = image || productData?.image?.[0];
+  const productData = products.find(item => item._id === productId);
+  const displayImage = image || productData?.imageUrls?.[0];
 
   return productData ? (
     <div className='border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100'>
@@ -22,7 +22,7 @@ const Product = () => {
         <div className='flex-1 flex flex-col-reverse gap-3 sm:flex-row'>
           <div className='flex sm:flex-col overflow-x-auto justify-between sm:justify-normal sm:w-[18.7%] w-full'>
             {
-              productData.image.map((item, index) => (
+              productData.imageUrls.map((item, index) => (
                 <img onClick={() => setImage(item)} src={item} key={index} className='w-[24%] sm:w-full sm:mb-3 shrink-0 cursor-pointer' alt="" />
               ))
             }
@@ -47,12 +47,12 @@ const Product = () => {
           <div className='flex flex-col gap-4 my-8'>
             <p>Select Size</p>
             <div className='flex gap-2'>
-              {productData.sizes.map((item, index) => (
+              {productData.sizes?.map((item, index) => (
                 <button onClick={() => setSize(item)} key={index} className={`border py-2 px-4 bg-gray-100 ${item === size ? 'border-orange-500' : ''}`}>{item}</button>
               ))}
             </div>
           </div>
-          <button onClick={() => addToCart(productData.id, size)} className='bg-black text-white px-8 py-3 text-sm active:bg-gray-700'>ADD TO CART</button>
+          <button onClick={() => addToCart(productData._id, size)} className='bg-black text-white px-8 py-3 text-sm active:bg-gray-700'>ADD TO CART</button>
           <hr className='mt-8 sm:w-4/5' />
           <div className='text-sm text-gray-500 mt-5 flex flex-col gap-1'>
             <p>100% Original Product</p>

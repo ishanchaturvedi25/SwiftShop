@@ -14,6 +14,7 @@ import star_dull_icon from './star_dull_icon.png'
 import bin_icon from './bin_icon.png'
 import stripe_logo from './stripe_logo.png'
 import razorpay_logo from './razorpay_logo.png'
+import about_img from './about_img.png'
 
 export const assets = {
     logo,
@@ -32,4 +33,5 @@ export const assets = {
     bin_icon,
     stripe_logo,
     razorpay_logo,
+    about_img,
 }

@@ -18,4 +18,13 @@ const verifyPayment = async (req, res) => {
     }
 };
 
-module.exports = { createOrder, verifyPayment };
+const getOrders = async (req, res) => {
+    try {
+        const orders = await orderService.getOrders(req.user.id);
+        res.json({ orders });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+module.exports = { createOrder, verifyPayment, getOrders };

@@ -3,12 +3,29 @@ import Title from '../components/Title'
 import CartTotal from '../components/CartTotal'
 import { assets } from '../assets/assets'
 import { ShopContext } from '../context/ShopContext'
+import { toast } from 'react-toastify'
+import apiClient from '../api/axios'
 
 const PlaceOrder = () => {
 
   const [method, setMethod] = useState('cod');
 
   const { navigate } = useContext(ShopContext);
+
+  const handlePlaceOrder = async () => {
+    try {
+      const response = await apiClient.post('/orders/create');
+      toast.success('Order created');
+
+      if (method === 'razorpay') {
+        const { razorpayOrder } = response.data;
+      } else {
+        navigate('/orders');
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to place order');
+    }
+  };
 
   return (
     <div className='flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t'>
@@ -57,7 +74,7 @@ const PlaceOrder = () => {
           </div>
 
           <div className='w-full text-end mt-8'>
-            <button onClick={() => navigate('/orders')} className='bg-black text-white px-16 py-3 text-sm cursor-pointer'>PLACE ORDER</button>
+            <button onClick={handlePlaceOrder} className='bg-black text-white px-16 py-3 text-sm cursor-pointer'>PLACE ORDER</button>
           </div>
         </div>
       </div>

@@ -9,24 +9,36 @@ const createOrder = async (userId) => {
     if (!cart || cart.items.length === 0)
         throw new Error('Cart is empty');
 
-    const totalAmount = cart.items.reduce((acc, item) => {
+    const totalPrice = cart.items.reduce((acc, item) => {
         return acc + item.product.price * item.quantity;
     }, 0);
 
     const razorpayOrder = await razorpay.orders.create({
-        amount: totalAmount * 100,
+        amount: totalPrice * 100,
         currency: 'INR'
     });
 
+    const orderItems = cart.items.map((item) => ({
+        product: item.product._id || item.product,
+        size: item.size,
+        quantity: item.quantity,
+    }));
+
     const order = await Order.create({
         user: userId,
-        items: cart.items,
-        totalAmount,
+        items: orderItems,
+        totalPrice,
         status: 'pending',
         razorpayOrderId: razorpayOrder.id
     });
 
     return { order, razorpayOrder };
+};
+
+const getOrders = async (userId) => {
+    return await Order.find({ user: userId })
+        .populate('items.product')
+        .sort({ createdAt: -1 });
 };
 
 const verifyPayment = async (data) => {
@@ -55,4 +67,4 @@ const verifyPayment = async (data) => {
     return order;
 }
 
-module.exports = { createOrder, verifyPayment };
+module.exports = { createOrder, verifyPayment, getOrders };

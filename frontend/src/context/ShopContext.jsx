@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import apiClient from "../api/axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export const ShopContext = createContext();
 
@@ -16,6 +17,8 @@ const ShopContextProvider = (props) => {
   const [showSearch, setShowSearch] = useState(false);
 
   const [cartItems, setCartItems] = useState({});
+
+  const navigate = useNavigate();
 
   const fetchCart = async () => {
     try {
@@ -119,6 +122,19 @@ const ShopContextProvider = (props) => {
     }
   };
 
+  const getCartTotal = () => {
+    let totalAmount = 0;
+    for (const productId in cartItems) {
+      const product = products.find((p) => p._id === productId);
+      if (product) {
+        for (const size in cartItems[productId]) {
+          totalAmount += product.price * cartItems[productId][size];
+        }
+      }
+    }
+    return totalAmount;
+  };
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -153,6 +169,8 @@ const ShopContextProvider = (props) => {
     getCartCount,
     updateQuantity,
     fetchCart,
+    getCartTotal,
+    navigate,
   };
 
   return (

@@ -16,12 +16,20 @@ app.use(cors({
 app.use(helmet());
 app.use(express.json());
 
-app.use(express.static('uploads'));
-
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  if (err.message === "INVALID_FILE_TYPE") {
+    return res
+      .status(400)
+      .json({ message: "Only JPEG, PNG, and WEBP images are allowed." });
+  }
+  res.status(500).json({ message: "Internal Server Error" });
+});
 
 app.get('/', (req, res) => {
   res.send('Welcome to SwiftShop API!');

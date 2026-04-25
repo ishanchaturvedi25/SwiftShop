@@ -1,11 +1,22 @@
 const productService = require('../services/product.service');
+const { uploadImages } = require('../services/cloudinary.service');
 
 const createProduct = async (req, res) => {
     try {
-        const imageUrls = req.files.map(file => `/uploads/${file.filename}`);
-        
+        const files = req.files || [];
+
+        if (files.length === 0) {
+            return res.status(400).json({ message: "At least one image is required" });
+        }
+
+        if (files.length > 5) {
+        return res.status(400).json({ message: "You can upload up to 5 images per product." });
+        }
+
+        const imageUrls = files.length > 0 ? await uploadImages(files) : [];
+
         const productData = { ...req.body, imageUrls };
-        
+
         const product = await productService.createProduct(productData);
         res.status(201).json(product);
     } catch (error) {

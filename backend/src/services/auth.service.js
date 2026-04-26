@@ -18,10 +18,10 @@ const signUp = async (data) => {
     return { user, token };
 };
 
-const login = async (data) => {
+const login = async (data, role) => {
     const { email, password } = data;
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email, role: role || 'user' });
     if (!user) {
         throw new Error('Invalid email or password');
     }

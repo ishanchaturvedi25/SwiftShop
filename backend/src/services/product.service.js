@@ -6,6 +6,11 @@ const createProduct = async (data) => {
     return await Product.create(data);
 }
 
+const deleteProduct = async (id) => {
+    await client.del(`product:${id}`);
+    return await Product.findByIdAndDelete(id);
+}
+
 const getProducts = async (data) => {
     let { page = 1, limit = 10, search, category } = data;
 
@@ -90,4 +95,4 @@ const getBestSellers = async () => {
     return products;
 };
 
-module.exports = { createProduct, getProducts, getProductById, getBestSellers };
+module.exports = { createProduct, deleteProduct, getProducts, getProductById, getBestSellers };

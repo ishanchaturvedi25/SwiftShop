@@ -16,6 +16,12 @@ router.post('/',
   productController.createProduct
 );
 
+router.delete('/:id', 
+  authMiddleware, 
+  isAdmin, 
+  productController.deleteProduct
+);
+
 router.get('/', productController.getProducts);
 router.get('/best-sellers', productController.getBestSellers);
 router.get('/:id', productController.getProductById);

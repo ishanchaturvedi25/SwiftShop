@@ -16,8 +16,8 @@ const App = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await apiClient.post("/auth/verify");
-        if (response.ok) {
+        const response = await apiClient.get("/auth/verify");
+        if (response.status === 200) {
           setIsAuthenticated(true);
         } else {
           setIsAuthenticated(false);

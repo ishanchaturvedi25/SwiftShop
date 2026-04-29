@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import apiClient from '../api/axios';
 import { toast } from 'react-toastify';
 import { ShopContext } from '../context/ShopContext';
@@ -13,7 +13,7 @@ const Login = () => {
     password: '',
   });
 
-  const { navigate } = useContext(ShopContext);
+  const { isAuthenticated, setIsAuthenticated, navigate } = useContext(ShopContext);
 
   const onChangeHandler = (e) => {
     setFormData(prev => ({
@@ -36,14 +36,21 @@ const Login = () => {
         email: '',
         password: '',
       });
+      setIsAuthenticated(true);
       toast.success(response.data.message);
-      navigate('/products');
+      navigate('/collection');
     } catch (error) {
       toast.error(error.response?.data?.error[0]?.message || error.response?.data?.error || 'Something went wrong');
     }
 
     setLoading(false);
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/collection');
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <form onSubmit={onSubmitHandler} className='flex flex-col items-center w-[90%] sm:max-w-96 m-auto mt-14 gap-4 text-gray-800'>

@@ -2,12 +2,24 @@ import React, { useContext, useState } from 'react'
 import { assets } from '../assets/assets'
 import { Link, NavLink } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext';
+import apiClient from '../api/axios';
+import { toast } from 'react-toastify';
 
 const Navbar = () => {
 
   const [visible, setVisible] = useState(false);
 
-  const { setShowSearch, getCartCount } = useContext(ShopContext);
+  const { setShowSearch, getCartCount, navigate } = useContext(ShopContext);
+
+  const logout = async () => {
+    try {
+        await apiClient.post('/auth/logout');
+        navigate('/login');
+    } catch (error) {
+        console.error('Error while logging out', error);
+        toast.error('Failed to logout. Please try again.');
+    }
+  }
     
   return (
     <div className='flex items-center justify-between py-5 font-medium'>
@@ -48,7 +60,7 @@ const Navbar = () => {
                     <div className='flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded'>
                         <p className='cursor-pointer hover:text-black'>My Profile</p>
                         <p className='cursor-pointer hover:text-black'>Orders</p>
-                        <p className='cursor-pointer hover:text-black'>Logout</p>
+                        <p className='cursor-pointer hover:text-black' onClick={logout}>Logout</p>
                     </div>
                 </div>
             </div>

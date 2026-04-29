@@ -1,17 +1,37 @@
-import { Routes, Route } from "react-router-dom"
-import Home from "./pages/Home"
-import Collection from "./pages/Collection"
-import About from "./pages/About"
-import Contact from "./pages/Contact"
-import Product from "./pages/Product"
-import Cart from "./pages/Cart"
-import Login from "./pages/Login"
-import PlaceOrder from "./pages/PlaceOrder"
-import Orders from "./pages/Orders"
-import Navbar from "./components/Navbar"
-import Footer from "./components/Footer"
-import SearchBar from "./components/SearchBar"
-import { ToastContainer } from "react-toastify"
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useContext } from "react";
+import Home from "./pages/Home";
+import Collection from "./pages/Collection";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Product from "./pages/Product";
+import Cart from "./pages/Cart";
+import Login from "./pages/Login";
+import PlaceOrder from "./pages/PlaceOrder";
+import Orders from "./pages/Orders";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import SearchBar from "./components/SearchBar";
+import { ToastContainer } from "react-toastify";
+import { ShopContext } from "./context/ShopContext";
+
+const GuestRoute = ({ children }) => {
+  const { isAuthenticated, authLoading } = useContext(ShopContext);
+
+  if (authLoading)
+    return null;
+
+  return isAuthenticated ? <Navigate to="/collection" replace /> : children;
+};
+
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, authLoading } = useContext(ShopContext);
+
+  if (authLoading)
+    return null;
+
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+};
 
 function App() {
   return (
@@ -30,9 +50,30 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/product/:productId" element={<Product />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/place-order" element={<PlaceOrder />} />
-        <Route path="/orders" element={<Orders />} />
+        <Route
+          path="/login"
+          element={
+            <GuestRoute>
+              <Login />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/place-order"
+          element={
+            <ProtectedRoute>
+              <PlaceOrder />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
       <Footer />
     </div>

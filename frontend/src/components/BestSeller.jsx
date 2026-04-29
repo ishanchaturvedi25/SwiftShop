@@ -11,7 +11,6 @@ const BestSeller = () => {
     async function fetchBestSeller() {
         try {
             const response = await apiClient.get('/products/best-sellers');
-            console.log(response.data);
             setBestSeller(response.data?.products || []);
         } catch (error) {
             console.log('Error while fetching the best sellers', error);

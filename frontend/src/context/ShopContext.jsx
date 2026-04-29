@@ -18,6 +18,9 @@ const ShopContextProvider = (props) => {
 
   const [cartItems, setCartItems] = useState({});
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authLoading, setAuthLoading] = useState(true);
+
   const navigate = useNavigate();
 
   const fetchCart = async () => {
@@ -153,6 +156,24 @@ const ShopContextProvider = (props) => {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    const checkAuth = async () => {
+      setAuthLoading(true);
+
+      try {
+        await apiClient.get("/auth/verify");
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error("Error while checking authentication:", error);
+        setIsAuthenticated(false);
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
   const value = {
     currency,
     delivery_fee,
@@ -170,6 +191,9 @@ const ShopContextProvider = (props) => {
     fetchCart,
     getCartTotal,
     navigate,
+    isAuthenticated,
+    setIsAuthenticated,
+    authLoading,
   };
 
   return (

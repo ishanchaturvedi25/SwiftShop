@@ -5,7 +5,7 @@ import { ShopContext } from '../context/ShopContext';
 
 const Login = () => {
 
-  const [currentState, setCurrentState] = useState('Sign Up');
+  const [currentState, setCurrentState] = useState('Login');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',

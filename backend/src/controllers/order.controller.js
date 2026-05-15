@@ -2,7 +2,7 @@ const orderService = require('../services/order.service');
 
 const createOrder = async (req, res) => {
     try {
-        const result = await orderService.createOrder(req.user.id);
+        const result = await orderService.createOrder(req.user.id, req.body.address);
         res.json(result);
     } catch (error) {
         res.status(400).json({ message: error.message });

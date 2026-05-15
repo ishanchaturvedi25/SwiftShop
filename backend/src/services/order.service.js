@@ -3,7 +3,7 @@ const Order = require('../models/order.model');
 const Cart = require('../models/cart.model');
 const razorpay = require('../utils/razorpay');
 
-const createOrder = async (userId) => {
+const createOrder = async (userId, address) => {
     const cart = await Cart.findOne({ user: userId }).populate('items.product');
 
     if (!cart || cart.items.length === 0)
@@ -29,8 +29,11 @@ const createOrder = async (userId) => {
         items: orderItems,
         totalPrice,
         status: 'pending',
-        razorpayOrderId: razorpayOrder.id
+        razorpayOrderId: razorpayOrder.id,
+        address
     });
+
+    await Cart.deleteOne({ user: userId });
 
     return { order, razorpayOrder };
 };

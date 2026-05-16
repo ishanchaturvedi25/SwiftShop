@@ -36,8 +36,11 @@ const PlaceOrder = () => {
       const response = await apiClient.post('/orders/create', { address: formData });
       toast.success('Order created');
       fetchCart();
+      const { paymentInfo } = response.data;
       if (method === 'razorpay') {
-        const { razorpayOrder } = response.data;
+        // TO-DO
+      } else if (method === 'stripe') {
+        window.location.replace(paymentInfo.url);
       } else {
         navigate('/orders');
       }

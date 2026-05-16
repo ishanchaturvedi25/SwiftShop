@@ -14,6 +14,7 @@ import Footer from "./components/Footer";
 import SearchBar from "./components/SearchBar";
 import { ToastContainer } from "react-toastify";
 import { ShopContext } from "./context/ShopContext";
+import Verify from "./pages/Verify";
 
 const GuestRoute = ({ children }) => {
   const { isAuthenticated, authLoading } = useContext(ShopContext);
@@ -71,6 +72,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Orders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/verify"
+          element={
+            <ProtectedRoute>
+              <Verify />
             </ProtectedRoute>
           }
         />

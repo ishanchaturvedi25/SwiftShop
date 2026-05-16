@@ -2,8 +2,9 @@ const crypto = require('crypto');
 const Order = require('../models/order.model');
 const Cart = require('../models/cart.model');
 const razorpay = require('../utils/razorpay');
+const stripe = require('../utils/stripe');
 
-const createOrder = async (userId, address) => {
+const createOrder = async (userId, address, origin) => {
     const cart = await Cart.findOne({ user: userId }).populate('items.product');
 
     if (!cart || cart.items.length === 0)
@@ -12,11 +13,6 @@ const createOrder = async (userId, address) => {
     const totalPrice = cart.items.reduce((acc, item) => {
         return acc + item.product.price * item.quantity;
     }, 0);
-
-    const razorpayOrder = await razorpay.orders.create({
-        amount: totalPrice * 100,
-        currency: 'INR'
-    });
 
     const orderItems = cart.items.map((item) => ({
         product: item.product._id || item.product,
@@ -29,13 +25,31 @@ const createOrder = async (userId, address) => {
         items: orderItems,
         totalPrice,
         status: 'pending',
-        razorpayOrderId: razorpayOrder.id,
         address
     });
 
-    await Cart.deleteOne({ user: userId });
+    let paymentInfo;
 
-    return { order, razorpayOrder };
+    if (address.paymentMethod === 'razorpay') {
+        const razorpayOrder = await razorpay.orders.create({
+            amount: totalPrice * 100,
+            currency: 'INR'
+        });
+        paymentInfo = razorpayOrder;
+        order.razorpayOrderId = razorpayOrder.id;
+        await order.save();
+    } else if (address.paymentMethod === 'stripe') {
+        const stripeSession = await stripe.checkout.sessions.create({
+            success_url: `{origin}/verify?success=true&orderId=${order._id}`,
+            cancel_url: `{origin}/verify?success=false&orderId=${order._id}`,
+            mode: 'payment'
+        });
+        paymentInfo = stripeSession;
+    } else {
+        await Cart.findOneAndUpdate({ user: userId }, { items: [] });
+    }
+
+    return { order, paymentInfo };
 };
 
 const getOrders = async (userId) => {
@@ -45,6 +59,17 @@ const getOrders = async (userId) => {
 };
 
 const verifyPayment = async (data) => {
+    const { paymentMethod } = data;
+    
+    switch (paymentMethod) {
+        case 'razorpay':
+            return verifyRazorpayPayment(data);
+        case 'stripe':
+            return verifyStripePayment(data);
+    }
+}
+
+const verifyRazorpayPayment = async (data) => {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = data;
 
     const body = razorpay_order_id + '|' + razorpay_payment_id;
@@ -68,7 +93,22 @@ const verifyPayment = async (data) => {
     );
 
     return order;
-}
+};
+
+const verifyStripePayment = async (data) => {
+    const { orderId, success } = data;
+    
+    if (success === 'true') {
+        const order = await Order.findByIdAndUpdate(orderId, { status: 'paid' });
+        await Cart.findOneAndUpdate(
+            { user: order.user },
+            { items: [] }
+        );
+        return order;
+    } else {
+        throw new Error('payment verification failed');
+    }
+};
 
 const getOrdersForAdmin = async () => {
     return await Order.find()

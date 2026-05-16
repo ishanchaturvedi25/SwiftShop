@@ -14,25 +14,27 @@ const Verify = () => {
   const success = searchParams.get('success');
   const orderId = searchParams.get('orderId');
 
-  const verifyPayment = async () => {
-    if (success == undefined || !orderId)
+  useEffect(() => {
+    const verifyPayment = async () => {
+      if (success == undefined || !orderId) {
+        navigate('/');
         return;
+      }
 
-    try {
+      try {
         const response = await apiClient.post('/orders/verify', { success, orderId });
         if (response.data.order) {
-            setCartItems({});
-            navigate('/orders');
+          setCartItems({});
+          navigate('/orders');
         }
-    } catch (error) {
+      } catch (error) {
         navigate('/cart');
         toast.error(error.message);
+      }
     }
-  }
 
-  useEffect(() => {
     verifyPayment();
-  }, [])
+  }, [success, orderId, navigate, setCartItems])
 
   return (
     <div>

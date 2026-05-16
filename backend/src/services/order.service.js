@@ -70,4 +70,21 @@ const verifyPayment = async (data) => {
     return order;
 }
 
-module.exports = { createOrder, verifyPayment, getOrders };
+const getOrdersForAdmin = async () => {
+    return await Order.find()
+        .populate('user', 'name email')
+        .populate('items.product')
+        .sort({ createdAt: -1 });
+}
+
+const updateOrderStatus = async (orderId, status) => {
+    const order = await Order.findById(orderId);
+
+    if (!order)
+        throw new Error('Order not found');
+    order.status = status;
+    await order.save();
+    return order;
+}
+
+module.exports = { createOrder, verifyPayment, getOrders, getOrdersForAdmin, updateOrderStatus };

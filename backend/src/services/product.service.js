@@ -1,13 +1,10 @@
 const Product = require('../models/product.model');
-const { client } = require('../config/redis');
 
 const createProduct = async (data) => {
-    await client.del("products:*");
     return await Product.create(data);
 }
 
 const deleteProduct = async (id) => {
-    await client.del(`product:${id}`);
     return await Product.findByIdAndDelete(id);
 }
 
@@ -16,14 +13,6 @@ const getProducts = async (data) => {
 
     page = Number(page);
     limit = Number(limit);
-
-    const cacheKey = `products:${page}:${limit}:${search || ''}:${category || ''}`;
-
-    const cachedData = await client.get(cacheKey);
-    if (cachedData) {
-        console.log('Serving from Redis');
-        return JSON.parse(cachedData);
-    }
 
     const filter = {};
 
@@ -51,8 +40,6 @@ const getProducts = async (data) => {
         pages: Math.ceil(total / limit)
     };
 
-    await client.set(cacheKey, 60, JSON.stringify(result));
-
     return result;
 };
 
@@ -65,14 +52,6 @@ const getBestSellers = async () => {
 
     page = Number(page);
     limit = Number(limit);
-
-    const cacheKey = `bestSellers:${page}:${limit}`;
-    
-    const cachedData = await client.get(cacheKey);
-    if (cachedData) {
-        console.log('Serving best sellers from Redis');
-        return JSON.parse(cachedData);
-    }
 
     const skip = (page - 1) * limit;
 
@@ -89,8 +68,6 @@ const getBestSellers = async () => {
         page,
         pages: Math.ceil(total / limit)
     };
-
-    await client.set(cacheKey, 60, JSON.stringify(products));
     
     return products;
 };

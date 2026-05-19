@@ -30,6 +30,38 @@ const PlaceOrder = () => {
     }));
   };
 
+  const initPay = (paymentInfo) => {
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: paymentInfo.amount,
+      currency: 'INR',
+      name: 'SwiftShop',
+      description: 'Test Transaction',
+      order_id: paymentInfo.id,
+      receipt: paymentInfo.receipt,
+      handler: async function (response) {
+        try {
+          const { data } = await apiClient.post('/orders/verify', {
+            paymentMethod: 'razorpay',
+            razorpay_order_id: paymentInfo.id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature
+          });
+          if (data.status === 'paid') {
+            toast.success('Payment successful');
+            navigate('/orders');
+          }
+        } catch (error) {
+          console.log(error.message);
+          toast.error('Payment verification failed');
+        }
+      }
+    }
+
+    const razrorpay = new window.Razorpay(options);
+    razrorpay.open();
+  };
+
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
     try {
@@ -38,7 +70,7 @@ const PlaceOrder = () => {
       fetchCart();
       const { paymentInfo } = response.data;
       if (method === 'razorpay') {
-        // TO-DO
+        initPay(paymentInfo);
       } else if (method === 'stripe') {
         window.location.replace(paymentInfo.url);
       } else {

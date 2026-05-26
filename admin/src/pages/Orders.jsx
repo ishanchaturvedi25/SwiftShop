@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import apiClient from '../api/axios';
-import toast from 'react-toastify';
+import { toast } from 'react-toastify';
 import assets from '../assets/assets';
 
 const Orders = () => {

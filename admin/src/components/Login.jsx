@@ -11,7 +11,7 @@ const Login = ({ setIsAuthenticated }) => {
     e.preventDefault();
     try {
       const response = await apiClient.post('/auth/admin/login', { email, password });
-      if (response.ok) {
+      if (response.status === 200) {
         setIsAuthenticated(true);
       } else {
         toast.error(response?.data?.error || 'Login failed');

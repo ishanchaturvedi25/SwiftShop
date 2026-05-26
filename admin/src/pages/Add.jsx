@@ -81,7 +81,7 @@ const Add = () => {
       }
     } catch (error) {
       console.log('Error submitting form:', error);
-      toast.error(error.response?.data?.error[0]?.message ||'Failed to add product. Please try again.');
+      toast.error(error.response?.data?.message ||'Failed to add product. Please try again.');
     }
   }
 

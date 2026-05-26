@@ -26,7 +26,7 @@ const adminLogin = async (req, res) => {
         if (user.role !== 'admin') {
             return res.status(403).json({ error: 'Access denied. Admin role required.' });
         }
-        res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'strict' });
+        res.cookie('token', token, { httpOnly: true, secure: false, sameSite: 'strict' });
         res.status(200).json({ user });
     } catch (error) {
         res.status(400).json({ error: error.message });

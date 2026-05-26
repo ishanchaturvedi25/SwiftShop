@@ -1,7 +1,9 @@
-const { z } = require('zod');
+const { z } = require("zod");
+
+const sizeEnum = ["XS", "S", "M", "L", "XL", "XXL"];
 
 const createProductSchema = z.object({
-  name: z.string().min(2, 'Name is required'),
+  name: z.string().min(2, "Name is required"),
   description: z.string(),
 
   price: z.string().transform((val, ctx) => {
@@ -10,7 +12,7 @@ const createProductSchema = z.object({
     if (isNaN(parsed) || parsed < 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Price must be a non-negative number',
+        message: "Price must be a non-negative number",
       });
       return z.NEVER;
     }
@@ -26,13 +28,28 @@ const createProductSchema = z.object({
     if (isNaN(parsed) || parsed < 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Stock must be a non-negative number',
+        message: "Stock must be a non-negative number",
       });
       return z.NEVER;
     }
 
     return parsed;
   }),
+
+  sizes: z.preprocess((val) => {
+      if (typeof val === "string") {
+        try {
+          return JSON.parse(val);
+        } catch {
+          return val;
+        }
+      }
+      return val;
+    },
+    z.array(z.enum(sizeEnum)),
+  ),
+
+  bestSeller: z.string().transform((val) => val === "true"),
 });
 
 module.exports = { createProductSchema };

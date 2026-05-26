@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 
 const authRoutes = require('./routes/auth.routes');
@@ -13,6 +14,7 @@ app.use(cors({
   origin: process.env.CLIENT_URL,
   credentials: true
 }));
+app.use(cookieParser());
 app.use(helmet());
 app.use(express.json());
 

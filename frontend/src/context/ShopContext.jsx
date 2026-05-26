@@ -154,6 +154,7 @@ const ShopContextProvider = (props) => {
     };
 
     fetchProducts();
+    fetchCart();
   }, []);
 
   useEffect(() => {

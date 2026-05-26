@@ -13,7 +13,7 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { user, token } = await authService.login(req.body, 'user');
-        res.cookie('token', token, { httpOnly: true, secure: true, sameSite: 'strict' });
+        res.cookie('token', token, { httpOnly: true, secure: false, sameSite: 'strict' });
         res.status(200).json({ user });
     } catch (error) {
         res.status(400).json({ error: error.message });

@@ -47,7 +47,7 @@ const getProductById = async (id) => {
     return await Product.findById(id);
 };
 
-const getBestSellers = async () => {
+const getBestSellers = async (data) => {
     let { page = 1, limit = 10, search, category } = data;
 
     page = Number(page);
@@ -69,7 +69,7 @@ const getBestSellers = async () => {
         pages: Math.ceil(total / limit)
     };
     
-    return products;
+    return result;
 };
 
 module.exports = { createProduct, deleteProduct, getProducts, getProductById, getBestSellers };

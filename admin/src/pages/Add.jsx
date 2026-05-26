@@ -78,6 +78,7 @@ const Add = () => {
         setProductSubCategory('topwear');
         setBestSeller(false);
         setProductSizes([]);
+        setProductStock('');
       }
     } catch (error) {
       console.log('Error submitting form:', error);
@@ -127,7 +128,7 @@ const Add = () => {
       <div className='flex flex-col sm:flex-row gap-2 w-full sm:gap-8'>
         <div>
           <p className='mb-2'>Product Category</p>
-          <select onChange={(e) => setProductCategory(e.target.value)} className='w-full px-3 py-2'>
+          <select onChange={(e) => setProductCategory(e.target.value)} value={productCategory} className='w-full px-3 py-2'>
             <option value="men">Men</option>
             <option value="women">Women</option>
             <option value="kids">Kids</option>

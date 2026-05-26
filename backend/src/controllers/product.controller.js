@@ -53,9 +53,10 @@ const getProductById = async (req, res) => {
 
 const getBestSellers = async (req, res) => {
     try {
-        const products = await productService.getBestSellers();
+        const products = await productService.getBestSellers(req.query);
         res.status(200).json(products);
     } catch (error) {
+        console.error('Error fetching best sellers:', error);
         res.status(400).json({ message: error.message });
     }
 };

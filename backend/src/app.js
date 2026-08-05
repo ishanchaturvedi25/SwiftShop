@@ -37,11 +37,18 @@ app.get('/', (req, res) => {
   res.send('Welcome to SwiftShop API!');
 });
 
+const mongoose = require("mongoose");
+
 app.get("/health", (req, res) => {
   res.status(200).json({
-    status: "OK",
+    status: "UP",
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || "development",
+    database:
+      mongoose.connection.readyState === 1
+        ? "CONNECTED"
+        : "DISCONNECTED",
   });
 });
 
